@@ -14,19 +14,21 @@ fun annotate(base64EncodedImage: String): HTMLCanvasElement {
 
     launch {
         val image = createImage(base64EncodedImage)
-        val width = image.naturalWidth
-        val height = image.naturalHeight
-        element.width = width
-        element.height = height
-
+        val canvasArea = Rectangle(Point(0, 0), Point(image.naturalWidth, image.naturalHeight))
+        element.width = image.naturalWidth
+        element.height = image.naturalHeight
+        val renderService = RenderService(context, canvasArea)
 
         val model = AnnotationModel()
-        val renderService = RenderService(model, context, image, width, height)
         val modeToBuilder = createModeToBuilderMap(model, renderService)
-        val actionService = ActionService(Mode.TEXT, modeToBuilder, { model.pendingDrawable = null })
-        val eventService = EventService(element)
+        val backgroundItem = BackgroundItem(image, canvasArea, modeToBuilder, model, renderService)
+        val buttons = Buttons(backgroundItem, renderService)
 
-        eventService.addHandler(actionService)
+        val canvasItemManager = CanvasItemManager(backgroundItem, model, buttons)
+        val eventService = EventService(element, canvasItemManager)
+
+        renderService.canvasItemManager = canvasItemManager
+        eventService.init()
 
         renderService.draw()
     }
@@ -49,7 +51,7 @@ suspend fun createImage(base64EncodedImage: String): HTMLImageElement =
 
 internal fun HTMLCanvasElement.get2dContext() = this.getContext("2d") as CanvasRenderingContext2D?
 
-internal interface Builder : EventHandler {
+internal interface Builder : Drawable {
     fun reset()
 }
 
