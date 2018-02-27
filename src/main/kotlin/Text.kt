@@ -27,17 +27,17 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
     override fun draw(context: CanvasRenderingContext2D) {
         context.save()
         context.fillStyle = "rgb(255, 0, 0)"
+        context.strokeStyle = "rgb(255, 255, 255)"
         context.setLineDash(emptyArray())
         context.textBaseline = CanvasTextBaseline.HANGING
         context.font = "${lineHeight}px bold serif"
         context.lineWidth = 2.0
-        context.shadowBlur = 1.0
-        context.shadowColor = "rgb(255, 255, 255)"
 
         if (text.isNotBlank()) {
             drawText(text, context)
         } else {
             context.fillStyle = "rgba(100, 100, 100, .7)"
+            context.strokeStyle = "rgba(255, 255, 255, .7)"
             drawText("Type to add comment", context)
         }
 
@@ -52,6 +52,7 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
                             else -> wrapLine(line, context)
                         }
                     }.forEachIndexed { i, wrappedLine ->
+                        context.strokeText(wrappedLine, bounds.x + padding, bounds.y + padding + (i * lineHeight))
                         context.fillText(wrappedLine, bounds.x + padding, bounds.y + padding + (i * lineHeight))
                     }
 

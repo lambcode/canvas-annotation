@@ -22,13 +22,14 @@ fun annotate(base64EncodedImage: String): HTMLCanvasElement {
         val model = AnnotationModel()
         val modeToBuilder = createModeToBuilderMap(model, renderService)
         val backgroundItem = BackgroundItem(image, canvasArea, modeToBuilder, model, renderService)
-        val buttons = Buttons(backgroundItem, renderService)
+        val toolbar = Toolbar(backgroundItem, renderService, model)
 
-        val canvasItemManager = CanvasItemManager(backgroundItem, model, buttons)
+        val canvasItemManager = CanvasItemManager(backgroundItem, model, toolbar)
         val eventService = EventService(element, canvasItemManager)
 
         renderService.canvasItemManager = canvasItemManager
         eventService.init()
+        toolbar.init()
 
         renderService.draw()
     }

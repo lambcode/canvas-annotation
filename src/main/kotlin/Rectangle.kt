@@ -77,7 +77,8 @@ internal class RectangleBuilder(private val model: AnnotationModel, private val 
 
     override val onMouseUp = mouseEventHandler {
         if (mouseDown) {
-            model.orderedCanvasItems.add(HighlightRectangle(startPoint, endPoint))
+            if (startPoint != endPoint)
+                model.orderedCanvasItems.add(HighlightRectangle(startPoint, endPoint))
             reset()
         }
     }
