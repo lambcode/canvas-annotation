@@ -7,6 +7,7 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
 
     private val buttons = mutableListOf<Button>()
     val orderedCanvasItems get() = listOf<CanvasItem>(this).plus(buttons)
+    val hide = false
 
     suspend fun init() {
 
@@ -26,7 +27,10 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
             textButton.toggled = true
             backgroundItem.changeMode(Mode.TEXT)
         }
-        undoButton.clickAction = model::undoLastChange
+        undoButton.clickAction = {
+            backgroundItem.reset()
+            model.undoLastChange()
+        }
 
         with(buttons) {
             add(rectangleButton)
@@ -63,9 +67,9 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
 
 }
 
-private const val PADDING = 3.0
-private const val BUTTON_WIDTH = 20.0
-private const val BUTTON_HEIGHT = 20.0
+private const val PADDING = 4.0
+private const val BUTTON_WIDTH = 25.0
+private const val BUTTON_HEIGHT = 25.0
 
 internal class Button(reDraw: () -> Unit, location: Point, val image: HTMLImageElement) : MouseDownHandler, MouseUpHandler, MouseEnterHandler, MouseLeaveHandler, CanvasItem {
 

@@ -102,12 +102,15 @@ internal class TextBuilder(private val model: AnnotationModel, private val rende
     }
 
     override val onMouseDown = mouseEventHandler {
-        if (editing) {
-            savePending(input.value)
+        if (pendingText?.bounds?.containsPoint(point) != true)
+        {
+            if (editing) {
+                savePending(input.value)
+            }
+            startPoint = point
+            endPoint = point
+            mouseDown = true
         }
-        startPoint = point
-        endPoint = point
-        mouseDown = true
     }
 
     override val onMouseMove = mouseEventHandler {

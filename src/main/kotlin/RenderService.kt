@@ -7,15 +7,20 @@ internal class RenderService(private val context: CanvasRenderingContext2D,
     var canvasItemManager: CanvasItemManager? = null
 
     fun draw() {
-        window.requestAnimationFrame { drawInternal() }
+        window.requestAnimationFrame { internalDraw(true) }
     }
 
-    private fun drawInternal() {
+    private fun internalDraw(drawAll: Boolean) {
         context.clearRect(canvasArea)
-        canvasItemManager?.orderedCanvasItems?.forEach {
+        val items =
+                if (drawAll) canvasItemManager?.orderedCanvasItems
+                else canvasItemManager?.annotationItemsOnly
+        items?.forEach {
             context.save()
             it.draw(context)
             context.restore()
         }
     }
+
+    fun drawForExternal() = internalDraw(false)
 }

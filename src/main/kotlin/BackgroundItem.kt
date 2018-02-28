@@ -39,6 +39,8 @@ internal class BackgroundItem(private val image: HTMLImageElement,
         renderService.draw()
     }
 
+    fun reset() = builder.reset()
+
 }
 
 internal enum class Mode {
