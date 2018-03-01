@@ -21,8 +21,7 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
     override val bounds = Rectangle(start, end)
     private val padding = 5
     private val textWidth = bounds.width - (padding * 2)
-    private val textHeight = bounds.height - (padding * 2)
-    private val lineHeight = minOf(textHeight.toInt(), 24)
+    private val lineHeight = 24
 
     override fun draw(context: CanvasRenderingContext2D) {
         context.save()
@@ -34,45 +33,35 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
         context.lineWidth = 2.0
 
         if (text.isNotBlank()) {
-            drawText(text, context)
+            wrapText(text, context)
         } else {
             context.fillStyle = "rgba(100, 100, 100, .7)"
             context.strokeStyle = "rgba(255, 255, 255, .7)"
-            drawText("Type to add comment", context)
+            wrapText("Type to add comment", context)
         }
 
         context.restore()
     }
 
-    private fun drawText(text: String, context: CanvasRenderingContext2D) =
-            text.split("\n|\r\n".toRegex())
-                    .flatMap { line ->
-                        when {
-                            context.measureText(line).width <= textWidth -> listOf(line)
-                            else -> wrapLine(line, context)
-                        }
-                    }.forEachIndexed { i, wrappedLine ->
-                        context.strokeText(wrappedLine, bounds.x + padding, bounds.y + padding + (i * lineHeight))
-                        context.fillText(wrappedLine, bounds.x + padding, bounds.y + padding + (i * lineHeight))
-                    }
+    private fun wrapText(text: String, context: CanvasRenderingContext2D) {
+        val words = text.split(' ')
+        var line = ""
+        var y = bounds.y + padding
 
-    private fun wrapLine(line: String, context: CanvasRenderingContext2D): List<String> {
-        val words = line.split(" ")
-        var index = words.size
-
-        while (index > 0 && context.measureText(words.subList(0, index).joinToString("", " ")).width > textWidth)
-            index--
-
-        if (index == 0)
-            return emptyList()
-
-        val keep = words.subList(0, index).joinToString(" ")
-        val rest = words.subList(index, words.size).joinToString(" ")
-
-        val wrappedLines = mutableListOf(keep)
-        if (rest.isNotBlank())
-            wrappedLines.addAll(wrapLine(rest, context))
-        return wrappedLines
+        for(n in 0..words.lastIndex) {
+            val testLine = line + words[n] + ' '
+            val metrics = context.measureText(testLine)
+            val testWidth = metrics.width
+            if (testWidth > textWidth && n > 0) {
+                context.fillText(line, bounds.x + padding, y)
+                line = words[n] + ' '
+                y += lineHeight
+            }
+            else {
+                line = testLine
+            }
+        }
+        context.fillText(line, bounds.x + padding, y)
     }
 }
 
