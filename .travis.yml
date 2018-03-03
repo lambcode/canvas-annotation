@@ -1,1 +1,11 @@
 language: java
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "V7ekCdv1zwsxtmTFNOfbDkeRM5TuB+a5xWzMExFb8nUdeLaEiPC3RwNlnBSsgDui5OXug1VwFFKYeOtCCgodGkqaP2xjNKwvyLG0LPHhSXqyr0VLcIkPfZupMXqcAnKJgn9NdcoR6EmDsEfEEwF9hZG/zYrIQokzSmOuY0C9oaJfL/uyGyqk1KfheBVPqUL0QC6LuTe8PebwcmouEtkqj8VZyg37Gq+U7J8kKT0tSuxr2H0nPVQ/vKKfpvRrCNVP0IRZ/6IJcsn6a5g4SB4t0+piShdVk1naTu5TQFcYt3eO8/NxS4MRQQDKrnNhSUDZX+xD9zikORLut42/etVGeyOW+24eUrirQh77Hetpa+w2AkB+Syba3FFCyeMYCSZqQlWTfEIUjHhqDXC35MGgnVKjDlVPBVHGhOwnzltZP1JGOsxjI+OywqUAgPn1uQC7CWF8I+DZDS38KfYcT1JHeFS+cIt0SS1c4byANlac7NP6hCpNmANNHJ9tjaWSWZ7eUE1Wm4+x5yu4ockNFveVDbEKWc8WyhjpgcXFZGfe2RX/WkcCuPIwIRx5RjNt3d50dw6Gw2xyWAR7VMnGZapParh9oJGNW3Gbj5AsTf4tjDs205RytgGcH7VFU/bQboUBw2cQ1e3ituD7NJNqe5CQNg8F/JcLzasnByGwCtE0Hlo="
+  file_glob: true
+  file: 'canvas-annotation-vanillajs/build/artifacts/*.zip'
+  skip_cleanup: true
+  on:
+    tags
