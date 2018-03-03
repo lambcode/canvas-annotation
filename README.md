@@ -1,4 +1,6 @@
 # canvas-annotation
+[![Build Status](https://travis-ci.org/lambcode/canvas-annotation.svg?branch=master)](https://travis-ci.org/lambcode/canvas-annotation)
+
 Annotate images in the browser with this HTML Canvas library
 
 ## Usage
