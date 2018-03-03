@@ -65,18 +65,6 @@ tasks {
             keep("canvas-annotation-lib.annotate")
         }
     }
-//    val assembleWeb by creating(Copy::class) {
-//        group = "build"
-//        description = "Assemble the web application"
-//        includeEmptyDirs = false
-//        from("$buildDir/kotlin-js-min/main")
-//        from(mainSourceSet.output) {
-//            exclude("**/*.kjsm")
-//            exclude("${project.name}*.js*")
-//        }
-//        into("$buildDir/web")
-//        dependsOn("runDceKotlinJs")
-//    }
     val minJs by creating(Task::class) {
         doLast {
             val output = file("$buildDir/minified/${project.name}_${project.version}.min.js")
@@ -101,7 +89,7 @@ tasks {
         }
         dependsOn(minJs)
     }
-    "build" {
+    "assemble" {
         dependsOn(zipArtifact)
     }
 

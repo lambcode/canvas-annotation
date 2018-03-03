@@ -33,7 +33,7 @@ tasks {
         dependsOn(getDependency)
         dependsOn(copyHtml)
     }
-    task("build") {
+    task("assemble") {
         dependsOn(zipArtifact)
     }
 
