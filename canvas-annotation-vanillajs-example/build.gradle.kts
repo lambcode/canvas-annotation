@@ -36,4 +36,8 @@ tasks {
     task("build") {
         dependsOn(zipArtifact)
     }
+
+    task("clean") {
+        delete("$buildDir")
+    }
 }
