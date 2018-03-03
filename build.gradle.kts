@@ -1,3 +1,4 @@
+import org.gradle.process.internal.ExecException
 import java.io.ByteArrayOutputStream
 
 allprojects {
@@ -8,9 +9,15 @@ allprojects {
 
 fun getVersionName(): String {
     val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "describe", "--tags")
-        standardOutput = stdout
+    try {
+        exec {
+            commandLine("git", "describe", "--tags")
+            standardOutput = stdout
+        }
     }
+    catch (ex: ExecException) {
+        throw IllegalStateException("Unable to resolve version from git. Must have at least one tag as ancestor", ex)
+    }
+
     return stdout.toString().trim()
 }
