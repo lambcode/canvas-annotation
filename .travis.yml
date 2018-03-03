@@ -8,4 +8,4 @@ deploy:
   file: 'canvas-annotation-vanillajs/build/artifacts/*.zip'
   skip_cleanup: true
   on:
-    tags
+    tags: true
