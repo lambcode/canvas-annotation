@@ -3,6 +3,7 @@ language: java
 before_deploy:
   - export VERSION=$(git describe --tags)
   - echo "deploying version $VERSION"
+  - find .
 
 deploy:
   provider: releases
