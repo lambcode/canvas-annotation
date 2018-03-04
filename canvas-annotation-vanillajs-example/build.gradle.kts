@@ -38,6 +38,8 @@ tasks {
     }
 
     "clean" {
-        delete("$buildDir")
+        doLast {
+            delete("$buildDir")
+        }
     }
 }
