@@ -62,7 +62,7 @@ tasks {
         dceOptions {
 
             devMode = false //change this if it gets to slow to be dynamic (should be false for production)
-            keep("canvas-annotation-lib.annotate")
+            keep("canvas-annotation-lib.annotateAsPromise")
         }
     }
     val minJs by creating(Task::class) {
