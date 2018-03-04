@@ -33,11 +33,11 @@ tasks {
         dependsOn(getDependency)
         dependsOn(copyHtml)
     }
-    task("assemble") {
+    "assemble" {
         dependsOn(zipArtifact)
     }
 
-    task("clean") {
+    "clean" {
         delete("$buildDir")
     }
 }
