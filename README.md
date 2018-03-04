@@ -3,6 +3,10 @@
 
 Annotate images in the browser with this HTML Canvas library
 
+Live demo: https://lambcode.github.io/canvas-annotation/
+
+Latest release: https://github.com/lambcode/canvas-annotation/releases/latest
+
 ## Usage
 
 Currently this library can be used as a vanillajs library or a kotlin library. See the 
