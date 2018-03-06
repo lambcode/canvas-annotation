@@ -6,10 +6,37 @@ import kotlin.browser.document
 import kotlin.coroutines.experimental.suspendCoroutine
 import kotlin.js.Promise
 
-private val DEFAULT_MESSAGE = "Use tools in toolbar above to annotate the image"
+private const val DEFAULT_MESSAGE = "Use tools in toolbar above to annotate the image"
 
+/** Prefer [annotateAsPromise] over this method. This method is provided for backwards compatibility if you need to support
+ * browsers that do not support Promises (ie Internet Explorer)
+ *
+ * @param success is called with a new canvas element
+ * @param error is called if the canvas could not be created
+ */
+@JsName("annotateAsCallback")
+fun annotateAsCallback(base64EncodedImage: String,
+                       success: (CanvasWrapper) -> Unit,
+                       error: () -> Unit,
+                       message: String = DEFAULT_MESSAGE) {
+    launch {
+        try {
+            success(annotate(base64EncodedImage, message))
+        } catch (ex: Throwable) {
+            console.error(ex)
+            error()
+        }
+    }
+}
+
+/**
+ * Create an enriched canvas element that allows users to highlight, add text, and more
+ * This method is useful when integrating with non-kotlin libraries. It is recommended to
+ * use [annotate] when using this library in another kotlin project to take full advantage of
+ * coroutines
+ */
 @JsName("annotateAsPromise")
-fun annotateAsPromise(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): Promise<HTMLCanvasElement> {
+fun annotateAsPromise(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): Promise<CanvasWrapper> {
     return Promise { resolve, reject ->
         launch {
             try {
@@ -22,7 +49,10 @@ fun annotateAsPromise(base64EncodedImage: String, message: String = DEFAULT_MESS
     }
 }
 
-suspend fun annotate(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): HTMLCanvasElement {
+/**
+ * Create an enriched canvas element that allows users to highlight, add text, and more
+ */
+suspend fun annotate(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): CanvasWrapper {
     val element = document.createElement("canvas") as HTMLCanvasElement
     val context = element.get2dContext() ?: throw IllegalStateException("Could not get render context")
 
@@ -49,18 +79,7 @@ suspend fun annotate(base64EncodedImage: String, message: String = DEFAULT_MESSA
 
     renderService.draw()
 
-    replaceToDataUrlFunction(element, renderService)
-
-    return element
-}
-
-internal fun replaceToDataUrlFunction(element: HTMLCanvasElement, renderService: RenderService) {
-    element.asDynamic().getAnnotatedImageAsBase64String = { type: String, quality: Any? ->
-        renderService.drawForExternal()
-        val value = element.toDataURL(type, quality)
-        renderService.draw()
-        value
-    }
+    return CanvasWrapper(element, renderService)
 }
 
 suspend fun createImage(base64EncodedImage: String): HTMLImageElement =

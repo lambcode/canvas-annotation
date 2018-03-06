@@ -55,14 +55,17 @@ tasks {
             outputFile = "${mainSourceSet.output.resourcesDir}/${project.name}.js"
             sourceMapEmbedSources = "always"
             sourceMap = true
-            moduleKind = "plain"
+            moduleKind = "umd"
         }
     }
     "runDceKotlinJs"(KotlinJsDce::class) {
         dceOptions {
 
             devMode = false //change this if it gets to slow to be dynamic (should be false for production)
-            keep("canvas-annotation-lib.annotateAsPromise")
+            keep("canvas-annotation-lib.annotateAsPromise",
+                    "canvas-annotation-lib.annotateAsCallback",
+                    "canvas-annotation-lib.CanvasWrapper.annotatedImage",
+                    "canvas-annotation-lib.CanvasWrapper.canvas")
         }
     }
     val minJs by creating(Task::class) {

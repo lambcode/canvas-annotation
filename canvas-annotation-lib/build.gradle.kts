@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
     var kotlin_version: String by extra
@@ -18,11 +19,23 @@ apply {
     plugin("kotlin2js")
 }
 
-val kotlin_version: String by extra
+val mainSourceSet = the<JavaPluginConvention>().sourceSets["main"]!!
+
+tasks {
+    "compileKotlin2Js"(Kotlin2JsCompile::class) {
+        kotlinOptions {
+            moduleKind = "umd"
+            sourceMapEmbedSources = "always"
+            sourceMap = true
+        }
+    }
+}
 
 repositories {
     mavenCentral()
 }
+
+val kotlin_version: String by extra
 
 dependencies {
     compile(kotlinModule("stdlib-js", kotlin_version))
