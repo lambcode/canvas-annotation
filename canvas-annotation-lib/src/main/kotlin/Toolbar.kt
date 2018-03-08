@@ -6,54 +6,58 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
 
     private val buttons = mutableListOf<Button>()
     val orderedCanvasItems get() = listOf<CanvasItem>(this).plus(buttons)
-    val hide = false
 
-    suspend fun init() {
+    suspend fun init(imageFileLocation: String) {
 
-        val rectangleButton = Button(renderService::draw, buttonLocations.next(), createImage("highlightMode.svg"))
-        val textButton = Button(renderService::draw, buttonLocations.next(), createImage("textMode.svg"))
-        val undoButton = Button(renderService::draw, buttonLocations.next(), createImage("undo.svg"))
+        try {
+            val rectangleButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}highlightMode.svg"))
+            val textButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}textMode.svg"))
+            val undoButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}undo.svg"))
 
-        rectangleButton.clickAction = {
-            console.log("Rectangle mode enabled")
-            resetAll()
-            rectangleButton.toggled = true
-            backgroundItem.changeMode(Mode.RECTANGLE)
+            rectangleButton.clickAction = {
+                console.log("Rectangle mode enabled")
+                resetAll()
+                rectangleButton.toggled = true
+                backgroundItem.changeMode(Mode.RECTANGLE)
+            }
+            textButton.clickAction = {
+                console.log("Text mode enabled")
+                resetAll()
+                textButton.toggled = true
+                backgroundItem.changeMode(Mode.TEXT)
+            }
+            undoButton.clickAction = {
+                backgroundItem.reset()
+                model.undoLastChange()
+            }
+
+            with(buttons) {
+                add(rectangleButton)
+                add(textButton)
+                add(undoButton)
+            }
+
+            // default to rectangle mode
+            rectangleButton.clickAction?.invoke()
+
+        } catch (ex: ImageCreationException) {
+            throw IllegalArgumentException("Unable to locate toolbar images. Set imageFileLocation config option to correct location", ex)
         }
-        textButton.clickAction = {
-            console.log("Text mode enabled")
-            resetAll()
-            textButton.toggled = true
-            backgroundItem.changeMode(Mode.TEXT)
-        }
-        undoButton.clickAction = {
-            backgroundItem.reset()
-            model.undoLastChange()
-        }
-
-        with(buttons) {
-            add(rectangleButton)
-            add(textButton)
-            add(undoButton)
-        }
-
-        // default to rectangle mode
-        rectangleButton.clickAction?.invoke()
     }
 
     private val buttonLocations = buildIterator {
         var x = PADDING
         val y = PADDING
 
-        while(true) {
+        while (true) {
             yield(Point(x, y))
-            x += BUTTON_WIDTH + (PADDING *2)
+            x += BUTTON_WIDTH + (PADDING * 2)
         }
     }
 
     override val bounds: Rectangle
         get() {
-            val totalWidth = buttons.map { it.bounds.width + (PADDING *2) }.reduce(Double::plus)
+            val totalWidth = buttons.map { it.bounds.width + (PADDING * 2) }.reduce(Double::plus)
             return Rectangle(Point(0, 0), Point(totalWidth, BUTTON_HEIGHT + (PADDING * 2)))
         }
 

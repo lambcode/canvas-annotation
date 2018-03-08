@@ -15,7 +15,7 @@
 	<a id="downloadLink" style="visibility:hidden" href="#">Download As Image</a>
 	<p id="error" style="visibility:hidden;color:red">Not an image or encoded incorrectly</p>
 
-	<script rel="text/javascript" src="$JS_LIBRARY"></script>
+	<script rel="text/javascript" src="lib/$JS_LIBRARY"></script>
 
 	<script>
 
@@ -33,12 +33,12 @@
             document.getElementById('submitBtn').onclick = function (event) {
                 var value = document.getElementById('inputBox').value;
                 document.getElementById('content').innerHTML = ''; //Remove all children
-                window["canvas-annotation-lib"].annotateAsCallback(value, function(canvasWrapper)  {
+                window["canvas-annotation-lib"].annotateAsPromise(value, "lib/").then(function(canvasWrapper)  {
                     currentCanvasWrapper = canvasWrapper;
                     document.getElementById('content').appendChild(canvasWrapper.canvas);
                     show('downloadLink');
                     hide('error');
-                }, function() {
+                }).catch(function() {
                     show('error')
                 });
             };

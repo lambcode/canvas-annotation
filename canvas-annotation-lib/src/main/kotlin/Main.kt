@@ -18,10 +18,11 @@ private const val DEFAULT_MESSAGE = "Use tools in toolbar above to annotate the 
 fun annotateAsCallback(base64EncodedImage: String,
                        success: (CanvasWrapper) -> Unit,
                        error: () -> Unit,
+                       imageFileLocation: String = "",
                        message: String = DEFAULT_MESSAGE) {
     launch {
         try {
-            success(annotate(base64EncodedImage, message))
+            success(annotate(base64EncodedImage, imageFileLocation, message))
         } catch (ex: Throwable) {
             console.error(ex)
             error()
@@ -36,11 +37,11 @@ fun annotateAsCallback(base64EncodedImage: String,
  * coroutines
  */
 @JsName("annotateAsPromise")
-fun annotateAsPromise(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): Promise<CanvasWrapper> {
+fun annotateAsPromise(base64EncodedImage: String, imageFileLocation: String = "", message: String = DEFAULT_MESSAGE): Promise<CanvasWrapper> {
     return Promise { resolve, reject ->
         launch {
             try {
-                resolve(annotate(base64EncodedImage, message))
+                resolve(annotate(base64EncodedImage, imageFileLocation, message))
             }
             catch (ex: Exception) {
                 reject(ex)
@@ -52,7 +53,7 @@ fun annotateAsPromise(base64EncodedImage: String, message: String = DEFAULT_MESS
 /**
  * Create an enriched canvas element that allows users to highlight, add text, and more
  */
-suspend fun annotate(base64EncodedImage: String, message: String = DEFAULT_MESSAGE): CanvasWrapper {
+suspend fun annotate(base64EncodedImage: String, imageFileLocation: String = "", message: String = DEFAULT_MESSAGE): CanvasWrapper {
     val element = document.createElement("canvas") as HTMLCanvasElement
     val context = element.get2dContext() ?: throw IllegalStateException("Could not get render context")
 
@@ -75,7 +76,7 @@ suspend fun annotate(base64EncodedImage: String, message: String = DEFAULT_MESSA
 
     renderService.canvasItemManager = canvasItemManager
     eventService.init()
-    toolbar.init()
+    toolbar.init(imageFileLocation)
 
     renderService.draw()
 
@@ -89,11 +90,13 @@ suspend fun createImage(base64EncodedImage: String): HTMLImageElement =
                 cont.resume(image)
             }
             image.onerror = { _, _, _, _, _ ->
-                cont.resumeWithException(IllegalArgumentException("The image could not be created with supplied string."))
+                cont.resumeWithException(ImageCreationException("The image could not be created with supplied string."))
             }
             //the src must be set after registering the callbacks to avoid missing the event
             image.src = base64EncodedImage
         }
+
+class ImageCreationException(message: String) : Exception(message)
 
 internal fun HTMLCanvasElement.get2dContext() = this.getContext("2d") as CanvasRenderingContext2D?
 

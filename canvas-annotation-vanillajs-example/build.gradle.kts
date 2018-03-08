@@ -13,7 +13,7 @@ dependencies {
 
 tasks {
     val getDependency by creating(Copy::class) {
-        into("${buildDir}/web")
+        into("${buildDir}/web/lib")
         configurations.get("js-min").forEach { file ->
             from(zipTree(file))
         }
