@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
     var kotlin_version: String by extra
-    kotlin_version = "1.2.20"
+    kotlin_version = "1.2.30"
 
     repositories {
         mavenCentral()
@@ -19,13 +19,12 @@ apply {
     plugin("kotlin2js")
 }
 
-val mainSourceSet = the<JavaPluginConvention>().sourceSets["main"]!!
-
 tasks {
     "compileKotlin2Js"(Kotlin2JsCompile::class) {
         kotlinOptions {
             moduleKind = "umd"
             sourceMapEmbedSources = "always"
+            sourceMapPrefix = "./"
             sourceMap = true
         }
     }

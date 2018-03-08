@@ -1,5 +1,3 @@
-
-
 internal class CanvasItemManager(val backgroundItem: BackgroundItem, val model: AnnotationModel, val toolbar: Toolbar, val messageOverlay: MessageOverlay) {
 
     val annotationItemsOnly: List<CanvasItem> get() {

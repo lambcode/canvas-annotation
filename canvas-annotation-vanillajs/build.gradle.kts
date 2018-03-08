@@ -1,24 +1,26 @@
-import com.eriwen.gradle.js.tasks.CombineJsTask
-import com.eriwen.gradle.js.tasks.MinifyJsTask
+import com.google.common.collect.ImmutableMap
 import com.google.javascript.jscomp.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
+import java.io.FileWriter
 import java.nio.charset.Charset
+import javax.swing.UIManager.put
+
+
 
 buildscript {
     var kotlin_version: String by extra
-    kotlin_version = "1.2.20"
-    val gradle_js_plugin_version = "1.12.1"
+    kotlin_version = "1.2.30"
 
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
     }
 
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlin_version))
-        classpath("com.eriwen:gradle-js-plugin:$gradle_js_plugin_version")
-        classpath("com.google.javascript:closure-compiler:v20160208")
+        classpath("com.google.javascript:closure-compiler:v20180204")
     }
 
 }
@@ -26,7 +28,6 @@ buildscript {
 apply {
     plugin("kotlin2js")
     plugin("kotlin-dce-js")
-    plugin("com.eriwen.gradle.js")
 }
 
 val kotlin_version: String by extra
@@ -98,18 +99,41 @@ tasks {
 
 }
 
-fun minify(output: File, input: List<String>) {
+fun minify(output: File, inputFileNames: List<String>) {
     val compiler = Compiler()
     val options = CompilerOptions().apply {
         languageIn = CompilerOptions.LanguageMode.ECMASCRIPT5
         setCompilationLevel(CompilationLevel.SIMPLE_OPTIMIZATIONS)
+        setSourceMapIncludeSourcesContent(true)
+        setApplyInputSourceMaps(true)
+        setInputSourceMaps(mapToMinified(inputFileNames))
+        setSourceMapLocationMappings(listOf(SourceMap.LocationMapping("$buildDir", ".")))
+        setSourceMapOutputPath("${output.parent}/${output.nameWithoutExtension}.map.js")
     }
 
-    val result = compiler.compile(CommandLineRunner.getBuiltinExterns(options), input.map { SourceFile.fromFile(file(it)) }, options)
-    if (result.success)
+    val result = compiler.compile(CommandLineRunner.getBuiltinExterns(options.environment), inputFileNames.map { SourceFile.fromPath(file(it).toPath(), Charset.defaultCharset()) }, options)
+    if (result.success) {
         output.writeText(compiler.toSource())
+        val fileWriter = FileWriter(file("${output.path}.map"))
+        compiler.sourceMap.appendTo(fileWriter, output.name)
+        fileWriter.flush()
+
+
+        //Need to append sourceMappingUrl because it is not done by closure compiler https://github.com/google/closure-compiler/wiki/FAQ#source-maps-and-sourcemappingurl
+        output.appendText("\n//# sourceMappingURL=${output.name}.map")
+    }
     else
-        throw IllegalStateException("unable to minify ${input.joinToString(", ")}")
+        throw IllegalStateException("unable to minify ${inputFileNames.joinToString(", ")}")
+}
+
+fun mapToMinified(filePaths: List<String>): ImmutableMap<String, SourceMapInput> {
+    val inputSourceMaps = ImmutableMap.Builder<String, SourceMapInput>()
+    for (filePath in filePaths) {
+        val sourceMap = SourceFile.fromFile("${filePath}.map", Charset.defaultCharset())
+        inputSourceMaps.put(
+                filePath, SourceMapInput(sourceMap))
+    }
+    return inputSourceMaps.build()
 }
 
 fun CompilerOptions.setCompilationLevel(level: CompilationLevel) = level.setDebugOptionsForCompilationLevel(this)

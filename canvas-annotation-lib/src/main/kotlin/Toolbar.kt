@@ -1,7 +1,6 @@
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLImageElement
 import kotlin.coroutines.experimental.buildIterator
-import kotlin.coroutines.experimental.buildSequence
 
 internal class Toolbar(private val backgroundItem: BackgroundItem, private val renderService: RenderService, private val model: AnnotationModel) : CanvasItem {
 
@@ -47,15 +46,15 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
         val y = PADDING
 
         while(true) {
-            yield(Point(x,y))
-            x += BUTTON_WIDTH + (PADDING*2)
+            yield(Point(x, y))
+            x += BUTTON_WIDTH + (PADDING *2)
         }
     }
 
     override val bounds: Rectangle
         get() {
-            val totalWidth = buttons.map { it.bounds.width + (PADDING*2) }.reduce(Double::plus)
-            return Rectangle(Point(0, 0), Point(totalWidth, BUTTON_HEIGHT + (PADDING*2)))
+            val totalWidth = buttons.map { it.bounds.width + (PADDING *2) }.reduce(Double::plus)
+            return Rectangle(Point(0, 0), Point(totalWidth, BUTTON_HEIGHT + (PADDING * 2)))
         }
 
     override fun draw(context: CanvasRenderingContext2D) {

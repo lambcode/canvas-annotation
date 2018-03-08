@@ -62,6 +62,7 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
             }
         }
         context.fillText(line, bounds.x + padding, y)
+        context.strokeText(line, bounds.x + padding, y)
     }
 }
 
@@ -91,8 +92,7 @@ internal class TextBuilder(private val model: AnnotationModel, private val rende
     }
 
     override val onMouseDown = mouseEventHandler {
-        if (pendingText?.bounds?.containsPoint(point) != true)
-        {
+        if (pendingText?.bounds?.containsPoint(point) != true) {
             if (editing) {
                 savePending(input.value)
             }
