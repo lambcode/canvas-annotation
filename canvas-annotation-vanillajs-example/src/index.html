@@ -33,7 +33,7 @@
             document.getElementById('submitBtn').onclick = function (event) {
                 var value = document.getElementById('inputBox').value;
                 document.getElementById('content').innerHTML = ''; //Remove all children
-                window["canvas-annotation-lib"].annotateAsPromise(value, "lib/").then(function(canvasWrapper)  {
+                window["canvas-annotation-lib"].annotateAsPromise(value, {imageLocation: 'lib/'}).then(function(canvasWrapper)  {
                     currentCanvasWrapper = canvasWrapper;
                     document.getElementById('content').appendChild(canvasWrapper.canvas);
                     show('downloadLink');

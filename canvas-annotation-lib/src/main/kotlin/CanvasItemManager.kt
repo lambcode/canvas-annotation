@@ -1,4 +1,4 @@
-internal class CanvasItemManager(val backgroundItem: BackgroundItem, val model: AnnotationModel, val toolbar: Toolbar, val messageOverlay: MessageOverlay) {
+internal class CanvasItemManager(val backgroundItem: BackgroundItem, val model: AnnotationModel, val toolbar: Toolbar, val messageOverlay: SplashScreen) {
 
     val annotationItemsOnly: List<CanvasItem> get() {
         val items = mutableListOf<CanvasItem>()

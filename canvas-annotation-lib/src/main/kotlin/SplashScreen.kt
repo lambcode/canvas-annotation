@@ -1,10 +1,13 @@
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HANGING
+import org.w3c.dom.MIDDLE
+import kotlin.math.min
 
-internal class MessageOverlay(val message: String, canvasArea: Rectangle, val renderService: RenderService) : CanvasItem, MouseDownHandler {
+internal class SplashScreen(messageOverride: String?, canvasArea: Rectangle, val renderService: RenderService) : CanvasItem, MouseDownHandler {
 
     var visible = true
+    var message = messageOverride ?: "Use tools in toolbar above to annotate the image"
 
     override val bounds: Rectangle = canvasArea
 
@@ -19,13 +22,16 @@ internal class MessageOverlay(val message: String, canvasArea: Rectangle, val re
 
             context.fillStyle = "rgb(255, 255, 255)"
             context.font = "25px serif"
-            context.textBaseline = CanvasTextBaseline.HANGING
-            val padding = overlayBox.width * .10
+            context.textBaseline = CanvasTextBaseline.MIDDLE
+            val paddingWidth = overlayBox.width * .10
+            val paddingHeight = overlayBox.height * .10
             val widthAdjust = context.measureText(message).width
-            val adjustedFontSize = 25 * ((overlayBox.width - padding) / widthAdjust)
+            val adjustedFontSize = min(
+                    25 * ((overlayBox.width - paddingWidth) / widthAdjust),
+                    overlayBox.height - paddingHeight)
             context.font = "${adjustedFontSize}px serif"
             val width = context.measureText(message).width
-            context.fillText(message, overlayBox.x + (overlayBox.width - width) / 2, overlayBox.y + (overlayBox.height - adjustedFontSize) / 2)
+            context.fillText(message, overlayBox.x + (overlayBox.width - width) / 2, overlayBox.y + (overlayBox.height / 2))
         }
     }
 

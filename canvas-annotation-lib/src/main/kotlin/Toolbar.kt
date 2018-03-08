@@ -7,8 +7,9 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
     private val buttons = mutableListOf<Button>()
     val orderedCanvasItems get() = listOf<CanvasItem>(this).plus(buttons)
 
-    suspend fun init(imageFileLocation: String) {
+    suspend fun init(imageFileLocationOverride: String?) {
 
+        val imageFileLocation = imageFileLocationOverride ?: ""
         try {
             val rectangleButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}highlightMode.svg"))
             val textButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}textMode.svg"))

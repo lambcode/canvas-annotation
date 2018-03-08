@@ -6,8 +6,6 @@ import kotlin.browser.document
 import kotlin.coroutines.experimental.suspendCoroutine
 import kotlin.js.Promise
 
-private const val DEFAULT_MESSAGE = "Use tools in toolbar above to annotate the image"
-
 /** Prefer [annotateAsPromise] over this method. This method is provided for backwards compatibility if you need to support
  * browsers that do not support Promises (ie Internet Explorer)
  *
@@ -18,11 +16,10 @@ private const val DEFAULT_MESSAGE = "Use tools in toolbar above to annotate the 
 fun annotateAsCallback(base64EncodedImage: String,
                        success: (CanvasWrapper) -> Unit,
                        error: () -> Unit,
-                       imageFileLocation: String = "",
-                       message: String = DEFAULT_MESSAGE) {
+                       annotationConfig: AnnotationConfig = AnnotationConfig()) {
     launch {
         try {
-            success(annotate(base64EncodedImage, imageFileLocation, message))
+            success(annotate(base64EncodedImage, annotationConfig))
         } catch (ex: Throwable) {
             console.error(ex)
             error()
@@ -37,11 +34,11 @@ fun annotateAsCallback(base64EncodedImage: String,
  * coroutines
  */
 @JsName("annotateAsPromise")
-fun annotateAsPromise(base64EncodedImage: String, imageFileLocation: String = "", message: String = DEFAULT_MESSAGE): Promise<CanvasWrapper> {
+fun annotateAsPromise(base64EncodedImage: String, annotationConfig: AnnotationConfig): Promise<CanvasWrapper> {
     return Promise { resolve, reject ->
         launch {
             try {
-                resolve(annotate(base64EncodedImage, imageFileLocation, message))
+                resolve(annotate(base64EncodedImage, annotationConfig))
             }
             catch (ex: Exception) {
                 reject(ex)
@@ -53,7 +50,7 @@ fun annotateAsPromise(base64EncodedImage: String, imageFileLocation: String = ""
 /**
  * Create an enriched canvas element that allows users to highlight, add text, and more
  */
-suspend fun annotate(base64EncodedImage: String, imageFileLocation: String = "", message: String = DEFAULT_MESSAGE): CanvasWrapper {
+suspend fun annotate(base64EncodedImage: String, annotationConfig: AnnotationConfig): CanvasWrapper {
     val element = document.createElement("canvas") as HTMLCanvasElement
     val context = element.get2dContext() ?: throw IllegalStateException("Could not get render context")
 
@@ -65,7 +62,7 @@ suspend fun annotate(base64EncodedImage: String, imageFileLocation: String = "",
     element.height = image.naturalHeight
     val renderService = RenderService(context, canvasArea)
 
-    val messageOverlay = MessageOverlay(message, canvasArea, renderService)
+    val messageOverlay = SplashScreen(annotationConfig.splashText, canvasArea, renderService)
     val model = AnnotationModel()
     val modeToBuilder = createModeToBuilderMap(model, renderService)
     val backgroundItem = BackgroundItem(image, canvasArea, modeToBuilder, model, renderService)
@@ -76,7 +73,7 @@ suspend fun annotate(base64EncodedImage: String, imageFileLocation: String = "",
 
     renderService.canvasItemManager = canvasItemManager
     eventService.init()
-    toolbar.init(imageFileLocation)
+    toolbar.init(annotationConfig.imageLocation)
 
     renderService.draw()
 
