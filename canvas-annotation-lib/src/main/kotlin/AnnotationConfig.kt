@@ -6,6 +6,7 @@
 external interface AnnotationConfig {
     var splashText: String?
     var imageLocation: String?
+    var saveButtonCallback: (() -> Unit)?
 }
 
 @Suppress("UnsafeCastFromDynamic", "FunctionName")

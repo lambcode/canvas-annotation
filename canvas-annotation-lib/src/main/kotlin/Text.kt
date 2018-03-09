@@ -26,11 +26,11 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
     override fun draw(context: CanvasRenderingContext2D) {
         context.save()
         context.fillStyle = "rgb(255, 0, 0)"
-        context.strokeStyle = "rgb(255, 255, 255)"
+        context.strokeStyle = "rgb(0, 0, 0)"
         context.setLineDash(emptyArray())
         context.textBaseline = CanvasTextBaseline.HANGING
         context.font = "${lineHeight}px bold serif"
-        context.lineWidth = 2.0
+        context.lineWidth = .3
 
         if (text.isNotBlank()) {
             wrapText(text, context)
@@ -54,6 +54,7 @@ internal class Text(private val text: String, start: Point, end: Point) : Canvas
             val testWidth = metrics.width
             if (testWidth > textWidth && n > 0) {
                 context.fillText(line, bounds.x + padding, y)
+                context.strokeText(line, bounds.x + padding, y)
                 line = words[n] + ' '
                 y += lineHeight
             }

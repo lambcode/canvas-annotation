@@ -66,7 +66,7 @@ suspend fun annotate(base64EncodedImage: String, annotationConfig: AnnotationCon
     val model = AnnotationModel()
     val modeToBuilder = createModeToBuilderMap(model, renderService)
     val backgroundItem = BackgroundItem(image, canvasArea, modeToBuilder, model, renderService)
-    val toolbar = Toolbar(backgroundItem, renderService, model)
+    val toolbar = Toolbar(backgroundItem, renderService, model, annotationConfig)
 
     val canvasItemManager = CanvasItemManager(backgroundItem, model, toolbar, messageOverlay)
     val eventService = EventService(element, canvasItemManager)

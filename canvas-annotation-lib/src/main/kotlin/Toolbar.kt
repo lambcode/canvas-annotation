@@ -2,7 +2,10 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLImageElement
 import kotlin.coroutines.experimental.buildIterator
 
-internal class Toolbar(private val backgroundItem: BackgroundItem, private val renderService: RenderService, private val model: AnnotationModel) : CanvasItem {
+internal class Toolbar(private val backgroundItem: BackgroundItem,
+                       private val renderService: RenderService,
+                       private val model: AnnotationModel,
+                       private val annotationConfig: AnnotationConfig) : CanvasItem {
 
     private val buttons = mutableListOf<Button>()
     val orderedCanvasItems get() = listOf<CanvasItem>(this).plus(buttons)
@@ -14,6 +17,7 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
             val rectangleButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}highlightMode.svg"))
             val textButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}textMode.svg"))
             val undoButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}undo.svg"))
+            val saveButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}save.svg"))
 
             rectangleButton.clickAction = {
                 console.log("Rectangle mode enabled")
@@ -31,11 +35,17 @@ internal class Toolbar(private val backgroundItem: BackgroundItem, private val r
                 backgroundItem.reset()
                 model.undoLastChange()
             }
+            saveButton.clickAction = {
+                backgroundItem.reset()
+                annotationConfig.saveButtonCallback?.invoke()
+            }
 
             with(buttons) {
                 add(rectangleButton)
                 add(textButton)
                 add(undoButton)
+                if (annotationConfig.saveButtonCallback != null)
+                    add(saveButton)
             }
 
             // default to rectangle mode
