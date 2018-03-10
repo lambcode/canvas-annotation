@@ -20,7 +20,7 @@ buildscript {
 
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlin_version))
-        classpath("com.google.javascript:closure-compiler:1.0-SNAPSHOT")
+        classpath("com.google.javascript:closure-compiler:v20180204")
     }
 
 }
