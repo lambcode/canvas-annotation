@@ -16,7 +16,7 @@ import kotlin.js.Promise
 fun annotateAsCallback(base64EncodedImage: String,
                        success: (CanvasWrapper) -> Unit,
                        error: () -> Unit,
-                       annotationConfig: AnnotationConfig = AnnotationConfig()) {
+                       annotationConfig: AnnotationConfig = AnnotationConfig({})) {
     launch {
         try {
             success(annotate(base64EncodedImage, annotationConfig))
@@ -34,7 +34,7 @@ fun annotateAsCallback(base64EncodedImage: String,
  * coroutines
  */
 @JsName("annotateAsPromise")
-fun annotateAsPromise(base64EncodedImage: String, annotationConfig: AnnotationConfig): Promise<CanvasWrapper> {
+fun annotateAsPromise(base64EncodedImage: String, annotationConfig: AnnotationConfig = AnnotationConfig({})): Promise<CanvasWrapper> {
     return Promise { resolve, reject ->
         launch {
             try {
@@ -50,7 +50,7 @@ fun annotateAsPromise(base64EncodedImage: String, annotationConfig: AnnotationCo
 /**
  * Create an enriched canvas element that allows users to highlight, add text, and more
  */
-suspend fun annotate(base64EncodedImage: String, annotationConfig: AnnotationConfig): CanvasWrapper {
+suspend fun annotate(base64EncodedImage: String, annotationConfig: AnnotationConfig = AnnotationConfig({})): CanvasWrapper {
     val element = document.createElement("canvas") as HTMLCanvasElement
     val context = element.get2dContext() ?: throw IllegalStateException("Could not get render context")
 

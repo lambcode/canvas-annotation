@@ -17,7 +17,16 @@ internal class Toolbar(private val backgroundItem: BackgroundItem,
             val rectangleButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}highlightMode.svg"))
             val textButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}textMode.svg"))
             val undoButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}undo.svg"))
-            val saveButton = Button(renderService::draw, buttonLocations.next(), createImage("${imageFileLocation}save.svg"))
+
+            val extraButtons = annotationConfig.extraButtons.orEmpty()
+                    .map { extraButtonConfig ->
+                        val extraButton = Button(renderService::draw, buttonLocations.next(), createImage("$imageFileLocation/${extraButtonConfig.svgFile}"))
+                        extraButton.clickAction = {
+                            backgroundItem.reset()
+                            extraButtonConfig.callback?.invoke()
+                        }
+                        extraButton
+                    }
 
             rectangleButton.clickAction = {
                 console.log("Rectangle mode enabled")
@@ -35,17 +44,12 @@ internal class Toolbar(private val backgroundItem: BackgroundItem,
                 backgroundItem.reset()
                 model.undoLastChange()
             }
-            saveButton.clickAction = {
-                backgroundItem.reset()
-                annotationConfig.saveButtonCallback?.invoke()
-            }
 
             with(buttons) {
                 add(rectangleButton)
                 add(textButton)
                 add(undoButton)
-                if (annotationConfig.saveButtonCallback != null)
-                    add(saveButton)
+                addAll(extraButtons)
             }
 
             // default to rectangle mode

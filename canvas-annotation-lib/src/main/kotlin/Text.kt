@@ -95,7 +95,7 @@ internal class TextBuilder(private val model: AnnotationModel, private val rende
     override val onMouseDown = mouseEventHandler {
         if (pendingText?.bounds?.containsPoint(point) != true) {
             if (editing) {
-                savePending(input.value)
+                savePending()
             }
             startPoint = point
             endPoint = point
@@ -128,6 +128,7 @@ internal class TextBuilder(private val model: AnnotationModel, private val rende
     }
 
     override fun reset() {
+        savePending()
         pendingText = null
         mouseDown = false
         editing = false
@@ -140,11 +141,11 @@ internal class TextBuilder(private val model: AnnotationModel, private val rende
         renderService.draw()
     }
 
-    private fun textFinalized(event: Event) = savePending(event.target?.asDynamic().value)
+    private fun textFinalized(event: Event) = savePending()
 
-    private fun savePending(value: String) {
-        if (value.isNotBlank())
-            model.orderedCanvasItems.add(Text(value, startPoint, endPoint))
+    private fun savePending() {
+        if (input.value.isNotBlank())
+            model.orderedCanvasItems.add(Text(input.value, startPoint, endPoint))
         reset()
         renderService.draw()
     }
