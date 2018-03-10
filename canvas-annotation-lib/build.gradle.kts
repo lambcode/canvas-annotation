@@ -22,6 +22,7 @@ apply {
 tasks {
     "compileKotlin2Js"(Kotlin2JsCompile::class) {
         kotlinOptions {
+
             moduleKind = "umd"
             sourceMapEmbedSources = "always"
             sourceMapPrefix = "./"

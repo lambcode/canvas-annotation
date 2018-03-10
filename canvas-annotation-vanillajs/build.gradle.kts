@@ -20,7 +20,7 @@ buildscript {
 
     dependencies {
         classpath(kotlinModule("gradle-plugin", kotlin_version))
-        classpath("com.google.javascript:closure-compiler:v20180204")
+        classpath("com.google.javascript:closure-compiler:1.0-SNAPSHOT")
     }
 
 }
@@ -107,7 +107,10 @@ fun minify(output: File, inputFileNames: List<String>) {
         setSourceMapIncludeSourcesContent(true)
         setApplyInputSourceMaps(true)
         setInputSourceMaps(mapToMinified(inputFileNames))
-        setSourceMapLocationMappings(listOf(SourceMap.LocationMapping("$buildDir", ".")))
+        setSourceMapLocationMappings(listOf(
+                SourceMap.LocationMapping("$buildDir/kotlin-js-min/main/", ""),
+                SourceMap.LocationMapping("./", "")
+                ))
         setSourceMapOutputPath("${output.parent}/${output.nameWithoutExtension}.map.js")
     }
 
