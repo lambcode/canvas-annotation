@@ -20,4 +20,4 @@ deploy:
       secure: "A0ZKXfaqLSxMIC8jZlzbHBEANhGnP9rnzWiOth92gWQqC7mQHRRO0EpoJ2j+bpho3q/k0XWaZuK1EohgTDjRLwPezvNaqD/H8Mkdl6OWXVuRzMoGsUCu4Y2j/kYSkXHDCodsLny5XU9iEcG4hqOEkB8uxrSay9zjoT0wEsYEHYiv+aGEPYU1TNvcn0wykWrwiHHrkeVRKy5JRV5UiEjsEWKXIJhEoUS7Pra2GeF0mdqcsRQ7IeXfzeqz7rxx3cCFz5T7LjS+DJfJABsQ/yD8mGj/u2uhkkOefYW8wTUCS0RN1GvKNZqvs/o1mjXbqL14pbn0RqKqesdwT4I+aq4p/sgQj5eyae7g9zlGFmUhoC3Y43cD/DaSkMjtlFM2bGiqIza7ThEKIamZE8juPCl08CveV2pKy++liyDVUHrZspgzutFylwv8sBFGTJnrT7V8BimuSfVP4J2cWstoM4eCEbNHhLXb6Jg41a91fjpQqWIWO73IR51ul7kH04JR2wXRwx6xcZKVDBRHSeSXbDqNi7LdQ8saz2fJ2EL39mUlJlWpPLhlXCMrBcuVdWlDcpMSTVSIRdDocwN2WhOV3iVofd0HwP9sqBKvFIc0s78xBVJ60MpeC3EXTyyNTIe++xoQDk4bDyrk0Z1prym7TKxM8dIValXomSlOZ4lmdVPGQjY="
     local-dir: "canvas-annotation-vanillajs-example/build/web"
     on:
-      branch: master
+      tags: true
